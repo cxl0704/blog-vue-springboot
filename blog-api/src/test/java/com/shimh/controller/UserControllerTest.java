@@ -6,6 +6,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -17,8 +18,9 @@ import com.shimh.BlogApiApplicationTests;
 import com.shimh.entity.User;
 import com.shimh.entity.UserStatus;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;  
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;  
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class UserControllerTest extends BlogApiApplicationTests{
@@ -32,8 +34,8 @@ public class UserControllerTest extends BlogApiApplicationTests{
     @Before
     public void setup() {    
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();    
-    } 
-	
+    }
+
 	@Test
 	public void saveUserTest() throws Exception {
 		User u = new User();
@@ -46,10 +48,11 @@ public class UserControllerTest extends BlogApiApplicationTests{
 		u.setMobilePhoneNumber("18396816462");
 		u.setStatus(UserStatus.normal);
 		
-        MvcResult result = mockMvc.perform(post("/users/create").contentType(MediaType.APPLICATION_JSON).content(JSONObject.toJSONString(u)))  
+        MvcResult result = mockMvc.perform(post("/users/create").contentType(MediaType.APPLICATION_JSON).content(JSONObject.toJSONString(u)))
                 .andExpect(status().isOk())// 模拟向testRest发送get请求    
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))// 预期返回值的媒体类型text/plain;charset=UTF-8    
-                .andReturn();// 返回执行请求的结果    
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))// 预期返回值的媒体类型text/plain;charset=UTF-8
+				.andDo(print())
+				.andReturn();// 返回执行请求的结果
           
         System.out.println(result.getResponse().getContentAsString()); 
 		
